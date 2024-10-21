@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using RobolineSoftlabApp.Data;
 using RobolineSoftlabApp.Domain.Models;
+using RobolineSoftlabApp.Infrastructure.Data;
 
 namespace RobolineSoftlabApp.Controllers
 {
@@ -25,7 +25,7 @@ namespace RobolineSoftlabApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ProductCategory.ToListAsync());
+            return View(await _context.ProductCategories.ToListAsync());
         }
 
         // GET: ProductCategories/Details/5
@@ -37,7 +37,7 @@ namespace RobolineSoftlabApp.Controllers
                 return NotFound();
             }
 
-            var productCategory = await _context.ProductCategory
+            var productCategory = await _context.ProductCategories
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (productCategory == null)
             {
@@ -78,7 +78,7 @@ namespace RobolineSoftlabApp.Controllers
                 return NotFound();
             }
 
-            var productCategory = await _context.ProductCategory.FindAsync(id);
+            var productCategory = await _context.ProductCategories.FindAsync(id);
             if (productCategory == null)
             {
                 return NotFound();
@@ -122,6 +122,7 @@ namespace RobolineSoftlabApp.Controllers
         }
 
         // GET: ProductCategories/Delete/5
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,7 +130,7 @@ namespace RobolineSoftlabApp.Controllers
                 return NotFound();
             }
 
-            var productCategory = await _context.ProductCategory
+            var productCategory = await _context.ProductCategories
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (productCategory == null)
             {
@@ -144,10 +145,10 @@ namespace RobolineSoftlabApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var productCategory = await _context.ProductCategory.FindAsync(id);
+            var productCategory = await _context.ProductCategories.FindAsync(id);
             if (productCategory != null)
             {
-                _context.ProductCategory.Remove(productCategory);
+                _context.ProductCategories.Remove(productCategory);
             }
 
             await _context.SaveChangesAsync();
@@ -156,7 +157,7 @@ namespace RobolineSoftlabApp.Controllers
 
         private bool ProductCategoryExists(int id)
         {
-            return _context.ProductCategory.Any(e => e.Id == id);
+            return _context.ProductCategories.Any(e => e.Id == id);
         }
     }
 }

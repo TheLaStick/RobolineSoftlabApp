@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using RobolineSoftlabApp.Data;
 using RobolineSoftlabApp.Domain.Models;
+using RobolineSoftlabApp.Infrastructure.Data;
 
 namespace RobolineSoftlabApp.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/products")]
     public class ProductsController : Controller
     {
         private readonly RobolineSoftlabAppContext _context;
@@ -25,7 +25,7 @@ namespace RobolineSoftlabApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Product.ToListAsync());
+            return View(await _context.Products.ToListAsync());
         }
 
         // GET: Products/Details/5
@@ -37,7 +37,7 @@ namespace RobolineSoftlabApp.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
+            var product = await _context.Products
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
@@ -79,7 +79,7 @@ namespace RobolineSoftlabApp.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product.FindAsync(id);
+            var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
@@ -123,7 +123,7 @@ namespace RobolineSoftlabApp.Controllers
         }
 
         // GET: Products/Delete/5
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -131,7 +131,7 @@ namespace RobolineSoftlabApp.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
+            var product = await _context.Products
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
@@ -146,10 +146,10 @@ namespace RobolineSoftlabApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Product.FindAsync(id);
+            var product = await _context.Products.FindAsync(id);
             if (product != null)
             {
-                _context.Product.Remove(product);
+                _context.Products.Remove(product);
             }
 
             await _context.SaveChangesAsync();
@@ -158,7 +158,7 @@ namespace RobolineSoftlabApp.Controllers
 
         private bool ProductExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            return _context.Products.Any(e => e.Id == id);
         }
     }
 }
