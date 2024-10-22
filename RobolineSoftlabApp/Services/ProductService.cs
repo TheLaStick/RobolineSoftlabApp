@@ -27,7 +27,7 @@ namespace RobolineSoftlabApp.Services
         /// </summary>
         /// <param name="product"></param>
         /// <returns></returns>
-        /// <exception cref="InvalidDataException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<Product> AddProduct(Product product)
         {
             product.Name = product.Name.Trim();
@@ -35,15 +35,15 @@ namespace RobolineSoftlabApp.Services
 
             if (product.Name.Length == 0)
             {
-                throw new InvalidDataException("Товар не может быть без названия");
+                throw new ArgumentException("Товар не может быть без названия");
             }
             if (product.Description.Length == 0)
             {
-                throw new InvalidDataException("Товар не может быть без описания");
+                throw new ArgumentException("Товар не может быть без описания");
             }
             if (product.Price < 0)
             {
-                throw new InvalidDataException("Товар не может иметь отрицательную цену");
+                throw new ArgumentException("Товар не может иметь отрицательную цену");
             }
 
             return await _productsRepo.AddProduct(product);

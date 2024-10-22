@@ -52,7 +52,7 @@ namespace RobolineSoftlabApp.Controllers
             {
                 return await _productService.AddProduct(product);
             }
-            catch (InvalidDataException ex)
+            catch (ArgumentException ex)
             {
                 return new ContentResult()
                 {

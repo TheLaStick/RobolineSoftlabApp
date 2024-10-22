@@ -4,10 +4,10 @@ using RobolineSoftlabApp.Infrastructure.Data;
 
 namespace RobolineSoftlabApp.Infrastructure.Repositories
 {
-    public class ProductCategoryRepository : IProductCategoriesRepository
+    public class ProductCategoriesRepository : IProductCategoriesRepository
     {
         private RobolineSoftlabAppContext _db;
-        public ProductCategoryRepository(RobolineSoftlabAppContext db)
+        public ProductCategoriesRepository(RobolineSoftlabAppContext db)
         {
             _db = db;
         }

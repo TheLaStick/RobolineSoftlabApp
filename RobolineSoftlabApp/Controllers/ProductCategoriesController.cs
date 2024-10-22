@@ -52,7 +52,7 @@ namespace RobolineSoftlabApp.Controllers
             {
                 return await _categoryService.AddCategory(productCategory);
             }
-            catch (InvalidDataException ex)
+            catch (ArgumentException ex)
             {
                 return new ContentResult()
                 {
