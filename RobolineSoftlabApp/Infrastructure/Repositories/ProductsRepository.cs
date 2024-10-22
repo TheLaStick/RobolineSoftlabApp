@@ -13,12 +13,17 @@ namespace RobolineSoftlabApp.Infrastructure.Repositories
             _db = db;
         }
 
+        public List<Product> GetAllProducts() 
+        {
+            return _db.Products.ToList();
+        }
+
         /// <summary>
         /// Collects all products with corresponding id
         /// </summary>
         /// <param name="id">id of needed product</param>
         /// <returns>The first product that has corresponding id</returns>
-        public Product GetProductById(int id)
+        public Product? GetProductById(int id)
         {
             var query = _db.Products.Where(x => x.Id == id)
                 .ToList();
@@ -47,9 +52,9 @@ namespace RobolineSoftlabApp.Infrastructure.Repositories
         /// </summary>
         /// <param name="product">Current product</param>
         /// <returns>Changed product</returns>
-        public async Task<Product> UpdateProduct(Product product)
+        public async Task<Product?> UpdateProduct(Product product, int id)
         {
-            var query = _db.Products.Where(x => x.Id == product.Id).ToList();
+            var query = _db.Products.Where(x => x.Id == id).ToList();
 
             if (query.Count == 0)
             {

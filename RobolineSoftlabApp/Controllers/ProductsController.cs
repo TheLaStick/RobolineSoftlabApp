@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RobolineSoftlabApp.Domain.Models;
 using RobolineSoftlabApp.Infrastructure.Data;
+using RobolineSoftlabApp.Services;
 
 namespace RobolineSoftlabApp.Controllers
 {
@@ -14,151 +15,81 @@ namespace RobolineSoftlabApp.Controllers
     [ApiController]
     public class ProductsController : Controller
     {
-        private readonly RobolineSoftlabAppContext _context;
+        private ProductService _productService;
 
-        public ProductsController(RobolineSoftlabAppContext context)
+        public ProductsController(ProductService productService)
         {
-            _context = context;
+            _productService = productService;
         }
 
-        // GET: Products
-        [HttpGet]
-        public async Task<IActionResult> Index()
+        [HttpGet("products/all")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
         {
-            return View(await _context.Products.ToListAsync());
+            return _productService.GetAllProducts();
         }
 
-        // GET: Products/Details/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet("products/{id}")]
+        public async Task<ActionResult<Product>> GetProductById(int? id)
         {
-            if (id == null)
+            if (!id.HasValue)
             {
-                return NotFound();
+                return new NotFoundResult();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = _productService.GetProductById(id.Value);
             if (product == null)
             {
-                return NotFound();
+                return new NotFoundResult();
             }
 
-            return View(product);
+            return product;
         }
 
-        // GET: Products/Create
-        [HttpGet("create")]
-        public IActionResult Create()
+        [HttpPost("products/all")]
+        public async Task<ActionResult<Product>> AddNewProduct(Product product)
         {
-            return View();
-        }
-
-        // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,CategoryId")] Product product)
-        {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return await _productService.AddProduct(product);
             }
-            return View(product);
-        }
-
-        // GET: Products/Edit/5
-        [HttpGet]
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
+            catch (InvalidDataException ex)
             {
-                return NotFound();
-            }
-
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            return View(product);
-        }
-
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,CategoryId")] Product product)
-        {
-            if (id != product.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                return new ContentResult()
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                    Content = ex.Message,
+                    StatusCode = 400
+                };
             }
-            return View(product);
         }
 
-        // GET: Products/Delete/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int? id)
+        [HttpPut("products/{id}")]
+        public async Task<ActionResult<Product>> UpdateProduct(Product product, int? id)
         {
-            if (id == null)
+            if (!id.HasValue)
             {
-                return NotFound();
+                return new NotFoundResult();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            var result = await _productService.UpdateProduct(product, id.Value);
 
-            return View(product);
+            if (result == null)
+            {
+                return new NotFoundResult();
+            }
+            return result;
         }
 
-        // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpDelete("products/{id}")]
+        public async Task<ActionResult> Delete(int? id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
+            if (!id.HasValue)
             {
-                _context.Products.Remove(product);
+                return new NotFoundResult();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            await _productService.DeleteProduct(id.Value);
 
-        private bool ProductExists(int id)
-        {
-            return _context.Products.Any(e => e.Id == id);
+            return new OkResult();
         }
     }
 }
