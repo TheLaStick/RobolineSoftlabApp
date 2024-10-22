@@ -60,6 +60,14 @@ namespace RobolineSoftlabApp.Controllers
                     StatusCode = 400
                 };
             }
+            catch (InvalidDataException ex)
+            {
+                return new ContentResult()
+                {
+                    Content = ex.Message,
+                    StatusCode = 400
+                };
+            }
         }
 
         [HttpPut("categories/all")]

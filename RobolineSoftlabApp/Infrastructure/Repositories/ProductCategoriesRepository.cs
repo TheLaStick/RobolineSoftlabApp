@@ -30,6 +30,13 @@ namespace RobolineSoftlabApp.Infrastructure.Repositories
 
         public async Task<ProductCategory> AddCategory(ProductCategory category)
         {
+            var check = _db.ProductCategories.Where(x => x.Name == category.Name &&
+                x.Description == category.Description).ToList();
+            if (check.Count > 0)
+            {
+                throw new InvalidDataException("Такая категория уже существует");
+            }
+
             var query = await _db.ProductCategories.AddAsync(category);
             await _db.SaveChangesAsync();
             return query.Entity;

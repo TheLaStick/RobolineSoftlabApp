@@ -25,7 +25,7 @@ namespace RobolineSoftlabApp.Controllers
         [HttpGet("products/all")]
         public async Task<ActionResult<IEnumerable<Product>>> GetAllProducts()
         {
-            return _productService.GetAllProducts();
+            return Ok(_productService.GetAllProducts());
         }
 
         [HttpGet("products/{id}")]
@@ -42,7 +42,7 @@ namespace RobolineSoftlabApp.Controllers
                 return new NotFoundResult();
             }
 
-            return product;
+            return Ok(product);
         }
 
         [HttpPost("products/all")]
@@ -53,6 +53,14 @@ namespace RobolineSoftlabApp.Controllers
                 return await _productService.AddProduct(product);
             }
             catch (ArgumentException ex)
+            {
+                return new ContentResult()
+                {
+                    Content = ex.Message,
+                    StatusCode = 400
+                };
+            }
+            catch (InvalidDataException ex)
             {
                 return new ContentResult()
                 {
