@@ -5,20 +5,20 @@ namespace RobolineSoftlabApp.Services
 {
     public class ProductService
     {
-        private IProductsRepository productsRepo;
+        private IProductsRepository _productsRepo;
         public ProductService(IProductsRepository productsRepository)
         {
-            this.productsRepo = productsRepository;
+            this._productsRepo = productsRepository;
         }
 
         public List<Product> GetAllProducts()
         {
-            return productsRepo.GetAllProducts();
+            return _productsRepo.GetAllProducts();
         }
 
         public Product? GetProductById(int id)
         {
-            return productsRepo.GetProductById(id);
+            return _productsRepo.GetProductById(id);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace RobolineSoftlabApp.Services
                 throw new InvalidDataException("Товар не может иметь отрицательную цену");
             }
 
-            return await productsRepo.AddProduct(product);
+            return await _productsRepo.AddProduct(product);
         }
         /// <summary>
         /// Clears name and description in product, checks if they aren't empty and if price is non-negative.
@@ -73,12 +73,12 @@ namespace RobolineSoftlabApp.Services
             }
             
 
-            return await productsRepo.UpdateProduct(product, id);
+            return await _productsRepo.UpdateProduct(product, id);
         }
 
         public async Task DeleteProduct(int id)
         {
-            await productsRepo.DeleteProduct(id);
+            await _productsRepo.DeleteProduct(id);
         }
     }
 }
